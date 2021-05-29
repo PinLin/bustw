@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { PtxService } from '../ptx/ptx.service';
-import { DataVersion } from './model/data-version.model';
+import { BusInfo } from './model/bus-info.model';
 
 @Injectable()
-export class DataVersionService {
+export class BusInfoService {
   constructor(
     private readonly ptxService: PtxService,
   ) { }
 
-  async getDataVersion(city: string) {
+  async getBusInfo(city: string) {
     const ptxDataVersion = await this.ptxService.fetchPtxDataVersion(city);
 
     return {
-      versionId: ptxDataVersion.VersionID,
-      updateTime: new Date(ptxDataVersion.UpdateTime),
-    } as DataVersion;
+      routesVersion: ptxDataVersion.VersionID,
+      routesUpdateTime: new Date(ptxDataVersion.UpdateTime),
+    } as BusInfo;
   }
 }

@@ -3,14 +3,14 @@ import { Cache } from 'cache-manager';
 import { BusStopService } from './bus-stop.service';
 import { BusStop } from './model/bus-stop.model';
 
-@Controller('stops')
+@Controller('bus/city/:city/routes/:routeId/stops')
 export class BusStopController {
   constructor(
     @Inject(CACHE_MANAGER) private readonly cache: Cache,
     private readonly busStopService: BusStopService,
   ) { }
 
-  @Get(':city/:routeId')
+  @Get()
   async getBusStops(@Param('city') city: string, @Param('routeId') routeId: string) {
     if (!city || !routeId) {
       throw new ForbiddenException();

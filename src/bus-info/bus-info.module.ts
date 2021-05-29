@@ -1,7 +1,7 @@
 import { CacheModule, Module } from '@nestjs/common';
 import * as redisStore from 'cache-manager-redis-store';
-import { DataVersionService } from './data-version.service';
-import { DataVersionController } from './data-version.controller';
+import { BusInfoService } from './bus-info.service';
+import { BusInfoController } from './bus-info.controller';
 import { PtxModule } from '../ptx/ptx.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
@@ -18,7 +18,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
     PtxModule,
   ],
-  providers: [DataVersionService],
-  controllers: [DataVersionController],
+  providers: [BusInfoService],
+  controllers: [BusInfoController],
 })
-export class DataVersionModule { }
+export class BusInfoModule { }
