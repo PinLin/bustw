@@ -2,27 +2,39 @@
 
 Bus tracker for Taiwan 🇹🇼
 
-## Installation
+## Dependencies
+
+- `redis`
+
+## Usage
+
+### `Docker`
 
 ```bash
-npm install
+docker run --name bustw-server \
+-e PTX_APP_ID='<PTX_APP_ID>' \
+-e PTX_APP_KEY='<PTX_APP_KEY>' \
+-e REDIS_HOST='172.17.0.1' \
+-p 3000:3000 \
+--restart=always -d \
+pinlin/bustw-server
 ```
 
-## Running the app
+### Manual
 
 ```bash
-# development
-npm run start
+# Install dependencies
+npm install
 
-# watch mode
+# Run on development mode
 npm run start:dev
-
-# production mode
+# Run on production mode
+npm run build
 npm run start:prod
 ```
 
 ## License
 [MIT License](LICENSE)
 
-## Source
+## Data Source
 [![公共運輸整合資訊流通服務平臺（Public Transport data eXchange, PTX）](https://imgur.com/wp2gOeU.png)](http://ptx.transportdata.tw/PTX)
