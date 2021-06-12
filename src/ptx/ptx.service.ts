@@ -48,7 +48,7 @@ export class PtxService {
 
     try {
       const response = await this.httpService.get(url, { headers }).toPromise();
-      this.logger.log(`Fetched DataVersion of ${city}`);
+      this.logger.debug(`Fetched DataVersion of ${city}`);
       return response.data as PtxDataVersion;
     } catch (e) {
       this.logger.error(`Failed to fetch DataVersion of ${city}`);
@@ -63,7 +63,7 @@ export class PtxService {
 
     try {
       const response = await this.httpService.get(url, { headers }).toPromise();
-      this.logger.log(`Fetched BusRoute of ${city}`);
+      this.logger.debug(`Fetched BusRoute of ${city}`);
       return response.data as PtxBusRoute[];
     } catch (e) {
       this.logger.error(`Failed to fetch BusRoute of ${city}`);
@@ -78,7 +78,7 @@ export class PtxService {
 
     try {
       const response = await this.httpService.get(url, { headers }).toPromise();
-      this.logger.log(`Fetched BusStopOfRoute of ${city}`);
+      this.logger.debug(`Fetched BusStopOfRoute of ${city}`);
       return response.data as PtxBusStopOfRoute[];
     } catch (e) {
       this.logger.error(`Failed to fetch BusStopOfRoute of ${city}`);
@@ -93,7 +93,7 @@ export class PtxService {
 
     try {
       const response = await this.httpService.get(url, { headers }).toPromise();
-      this.logger.log(`Fetched BusEstimatedTimeOfArrival of ${city}`);
+      this.logger.debug(`Fetched BusEstimatedTimeOfArrival of ${city}`);
       return response.data as PtxBusEstimatedTimeOfArrival[];
     } catch (e) {
       this.logger.error(`Failed to fetch BusEstimatedTimeOfArrival of ${city}`);
@@ -108,7 +108,7 @@ export class PtxService {
 
     try {
       const response = await this.httpService.get(url, { headers }).toPromise();
-      this.logger.log(`Fetched RealTimeNearStop of ${city}`);
+      this.logger.debug(`Fetched RealTimeNearStop of ${city}`);
       return response.data as PtxBusRealTimeNearStop[];
     } catch (e) {
       this.logger.error(`Failed to fetch RealTimeNearStop of ${city}`);
