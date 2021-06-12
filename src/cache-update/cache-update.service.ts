@@ -3,18 +3,15 @@ import { Cache } from 'cache-manager';
 import { Cron, NestSchedule, Timeout } from 'nest-schedule';
 import { BusRouteService } from '../bus-route/bus-route.service';
 import { BusInfoService } from '../bus-info/bus-info.service';
+import { PtxService } from 'src/ptx/ptx.service';
 
 @Injectable()
 export class CacheUpdateService extends NestSchedule {
   private readonly logger = new Logger(CacheUpdateService.name);
-  private cities: string[] = [
-    'InterCity', 'Keelung', 'Taipei', 'NewTaipei', 'Taoyuan', 'Taichung', 'Tainan', 'Kaohsiung',
-    'Hsinchu', 'HsinchuCounty', 'MiaoliCounty', 'ChanghuaCounty', 'NantouCounty', 'YunlinCounty',
-    'ChiayiCounty', 'Chiayi', 'PingtungCounty', 'YilanCounty', 'HualienCounty', 'TaitungCounty',
-    'KinmenCounty', 'PenghuCounty', 'LienchiangCounty'
-  ];
+
   constructor(
     @Inject(CACHE_MANAGER) private readonly cache: Cache,
+    private readonly ptxService: PtxService,
     private readonly busInfoService: BusInfoService,
     private readonly busRouteService: BusRouteService,
   ) {
@@ -34,7 +31,7 @@ export class CacheUpdateService extends NestSchedule {
   @Cron('0 0 */12 * * *')
   async updateBusInfoCache() {
     try {
-      await Promise.all(this.cities.map(async (city) => {
+      await Promise.all(this.ptxService.getAvailableCities().map(async (city) => {
         const busInfo = await this.busInfoService.getBusInfo(city);
         return this.cache.set(`BusInfo/${city}`, JSON.stringify(busInfo), { ttl: 99999 });
       }));
@@ -48,7 +45,7 @@ export class CacheUpdateService extends NestSchedule {
   @Cron('0 0 */12 * * *')
   async updateBusRoutesCache() {
     try {
-      await Promise.all(this.cities.map(async (city) => {
+      await Promise.all(this.ptxService.getAvailableCities().map(async (city) => {
         const busRoutes = await this.busRouteService.getBusRoutes(city);
         return this.cache.set(`BusRoutes/${city}`, JSON.stringify(busRoutes), { ttl: 99999 });
       }));

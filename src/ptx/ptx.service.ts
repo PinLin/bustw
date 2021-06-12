@@ -16,30 +16,13 @@ export class PtxService {
     private readonly httpService: HttpService,
   ) { }
 
-  getAuthorizationHeaders() {
-    const appId = this.config.get<string>('PTX_APP_ID');
-    const appKey = this.config.get<string>('PTX_APP_KEY');
-    const date = new Date();
-
-    const dateString = date.toUTCString();
-    const hash = CryptoJS.HmacSHA1(`x-date: ${dateString}`, appKey);
-    const hmac = CryptoJS.enc.Base64.stringify(hash);
-
-    return {
-      authorization: `hmac username="${appId}", algorithm="hmac-sha1", headers="x-date", signature="${hmac}"`,
-      'x-date': dateString,
-    };
-  }
-
-  getCityPath(city: string) {
-    if (city === 'InterCity') {
-      return 'InterCity';
-    }
-    return `City/${city}`
-  }
-
-  getFieldsQuery(fields: string[]) {
-    return '$select=' + fields.join(',');
+  getAvailableCities() {
+    return [
+      'InterCity', 'Keelung', 'Taipei', 'NewTaipei', 'Taoyuan', 'Taichung', 'Tainan', 'Kaohsiung',
+      'Hsinchu', 'HsinchuCounty', 'MiaoliCounty', 'ChanghuaCounty', 'NantouCounty', 'YunlinCounty',
+      'ChiayiCounty', 'Chiayi', 'PingtungCounty', 'YilanCounty', 'HualienCounty', 'TaitungCounty',
+      'KinmenCounty', 'PenghuCounty', 'LienchiangCounty'
+    ];
   }
 
   async fetchPtxDataVersion(city: string) {
@@ -114,5 +97,31 @@ export class PtxService {
       this.logger.error(`Failed to fetch RealTimeNearStop of ${city}`);
       throw new BadGatewayException();
     }
+  }
+
+  private getAuthorizationHeaders() {
+    const appId = this.config.get<string>('PTX_APP_ID');
+    const appKey = this.config.get<string>('PTX_APP_KEY');
+    const date = new Date();
+
+    const dateString = date.toUTCString();
+    const hash = CryptoJS.HmacSHA1(`x-date: ${dateString}`, appKey);
+    const hmac = CryptoJS.enc.Base64.stringify(hash);
+
+    return {
+      authorization: `hmac username="${appId}", algorithm="hmac-sha1", headers="x-date", signature="${hmac}"`,
+      'x-date': dateString,
+    };
+  }
+
+  private getCityPath(city: string) {
+    if (city === 'InterCity') {
+      return 'InterCity';
+    }
+    return `City/${city}`
+  }
+
+  private getFieldsQuery(fields: string[]) {
+    return '$select=' + fields.join(',');
   }
 }
