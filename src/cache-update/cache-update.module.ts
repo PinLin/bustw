@@ -1,9 +1,9 @@
 import { CacheModule, Module } from '@nestjs/common';
-import * as redisStore from 'cache-manager-redis-store';
-import { BusRouteService } from './bus-route.service';
-import { BusRouteController } from './bus-route.controller';
-import { PtxModule } from '../ptx/ptx.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import * as redisStore from 'cache-manager-redis-store';
+import { BusInfoModule } from '../bus-info/bus-info.module';
+import { BusRouteModule } from '../bus-route/bus-route.module';
+import { CacheUpdateService } from './cache-update.service';
 
 @Module({
   imports: [
@@ -16,10 +16,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
       inject: [ConfigService],
     }),
-    PtxModule,
+    BusInfoModule,
+    BusRouteModule,
   ],
-  providers: [BusRouteService],
-  controllers: [BusRouteController],
-  exports: [BusRouteService],
+  providers: [CacheUpdateService]
 })
-export class BusRouteModule { }
+export class CacheUpdateModule {}

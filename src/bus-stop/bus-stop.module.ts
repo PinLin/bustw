@@ -19,6 +19,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     PtxModule,
   ],
   providers: [BusStopService],
-  controllers: [BusStopController]
+  controllers: [BusStopController],
+  exports: [BusStopService],
 })
 export class BusStopModule { }

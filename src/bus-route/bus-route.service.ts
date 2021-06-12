@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable, ServiceUnavailableException } from '@nestjs/common';
+import { Cache } from 'cache-manager';
 import { PtxService } from '../ptx/ptx.service';
 import { BusRoute } from './model/bus-route.model';
 import { BusStop } from './model/bus-stop.model';
@@ -7,6 +8,7 @@ import { BusSubRoute } from './model/bus-sub-route.model';
 @Injectable()
 export class BusRouteService {
   constructor(
+    @Inject(CACHE_MANAGER) private readonly cache: Cache,
     private readonly ptxService: PtxService,
   ) { }
 
@@ -52,5 +54,14 @@ export class BusRouteService {
         stops: busStopDict[ptxBusSubRoute.SubRouteUID][ptxBusSubRoute.Direction],
       } as BusSubRoute)),
     } as BusRoute));
+  }
+
+  async getCachedBusRoutes(city: string) {
+    const cachedBusRoutes = JSON.parse(await this.cache.get(`BusRoutes/${city}`) ?? null) as BusRoute[];
+    if (cachedBusRoutes) {
+      return cachedBusRoutes;
+    } else {
+      throw new ServiceUnavailableException();
+    }
   }
 }

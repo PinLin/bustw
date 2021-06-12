@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { PtxBusEstimatedTimeOfArrival } from 'src/ptx/model/ptx-bus-estimated-time-of-arrival.model';
+import { CACHE_MANAGER, Inject, Injectable, ServiceUnavailableException } from '@nestjs/common';
+import { Cache } from 'cache-manager';
 import { PtxService } from '../ptx/ptx.service';
 import { BusStop } from './model/bus-stop.model';
 import { Bus } from './model/bus.model';
@@ -7,6 +7,7 @@ import { Bus } from './model/bus.model';
 @Injectable()
 export class BusStopService {
   constructor(
+    @Inject(CACHE_MANAGER) private readonly cache: Cache,
     private readonly ptxService: PtxService,
   ) { }
 
@@ -53,11 +54,22 @@ export class BusStopService {
     });
   }
 
-  async getBusStopsByRoute(city: string, routeId: string) {
-    const busStops = await this.getBusStops(city);
+  async getCachedBusStops(city: string) {
+    const cacheBusStops = JSON.parse(await this.cache.get(`BusStops/${city}`) ?? null) as BusStop[];
+    if (cacheBusStops) {
+      return cacheBusStops;
+    } else {
+      try {
+        const busStops = await this.getBusStops(city);
+        await this.cache.set(`BusStops/${city}`, JSON.stringify(busStops), { ttl: 60 });
+        return busStops;
+      } catch (e) {
+        throw new ServiceUnavailableException();
+      }
+    }
+  }
 
-    return busStops.filter((busStop) => {
-      return busStop.routeId == routeId;
-    });
+  async getCachedBusStopsByRoute(city: string, routeId: string) {
+    return (await this.getCachedBusStops(city)).filter(s => s.routeId == routeId);
   }
 }
