@@ -1,4 +1,4 @@
-import { Injectable, Logger, HttpService } from '@nestjs/common';
+import { Injectable, Logger, HttpService, BadGatewayException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as CryptoJS from 'crypto-js';
 import { PtxDataVersion } from './model/ptx-data-version.model';
@@ -52,6 +52,7 @@ export class PtxService {
       return response.data as PtxDataVersion;
     } catch (e) {
       this.logger.error(`Failed to fetch DataVersion of ${city}`);
+      throw new BadGatewayException();
     }
   }
 
@@ -66,6 +67,7 @@ export class PtxService {
       return response.data as PtxBusRoute[];
     } catch (e) {
       this.logger.error(`Failed to fetch BusRoute of ${city}`);
+      throw new BadGatewayException();
     }
   }
 
@@ -80,6 +82,7 @@ export class PtxService {
       return response.data as PtxBusStopOfRoute[];
     } catch (e) {
       this.logger.error(`Failed to fetch BusStopOfRoute of ${city}`);
+      throw new BadGatewayException();
     }
   }
 
@@ -94,6 +97,7 @@ export class PtxService {
       return response.data as PtxBusEstimatedTimeOfArrival[];
     } catch (e) {
       this.logger.error(`Failed to fetch BusEstimatedTimeOfArrival of ${city}`);
+      throw new BadGatewayException();
     }
   }
 
@@ -108,6 +112,7 @@ export class PtxService {
       return response.data as PtxBusRealTimeNearStop[];
     } catch (e) {
       this.logger.error(`Failed to fetch RealTimeNearStop of ${city}`);
+      throw new BadGatewayException();
     }
   }
 }
