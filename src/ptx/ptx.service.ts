@@ -25,7 +25,7 @@ export class PtxService {
     ];
   }
 
-  async fetchPtxDataVersion(city: string) {
+  async fetchDataVersion(city: string) {
     const url = `https://ptx.transportdata.tw/MOTC/v2/Bus/DataVersion/${this.getCityPath(city)}?$format=JSON`;
     const headers = this.getAuthorizationHeaders();
 
@@ -39,7 +39,7 @@ export class PtxService {
     }
   }
 
-  async fetchPtxBusRouteSet(city: string) {
+  async fetchBusRouteSet(city: string) {
     const fields = ['RouteUID', 'RouteName', 'SubRoutes', 'DepartureStopNameZh', 'DepartureStopNameEn', 'DestinationStopNameZh', 'DestinationStopNameEn', 'City']
     const url = `https://ptx.transportdata.tw/MOTC/v2/Bus/Route/${this.getCityPath(city)}?$format=JSON&${this.getFieldsQuery(fields)}`;
     const headers = this.getAuthorizationHeaders();
@@ -54,7 +54,7 @@ export class PtxService {
     }
   }
 
-  async fetchPtxBusStopOfRouteSet(city: string) {
+  async fetchBusStopOfRouteSet(city: string) {
     const fields = ['RouteUID', 'SubRouteUID', 'Direction', 'City', 'Stops']
     const url = `https://ptx.transportdata.tw/MOTC/v2/Bus/StopOfRoute/${this.getCityPath(city)}?$format=JSON&${this.getFieldsQuery(fields)}`;
     const headers = this.getAuthorizationHeaders();
@@ -69,7 +69,7 @@ export class PtxService {
     }
   }
 
-  async fetchPtxBusEstimatedTimeOfArrivalSet(city: string) {
+  async fetchBusEstimatedTimeOfArrivalSet(city: string) {
     const fields = ['RouteUID', 'StopUID', 'EstimateTime', 'StopStatus'];
     const url = `https://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/${this.getCityPath(city)}?$format=JSON&${this.getFieldsQuery(fields)}`;
     const headers = this.getAuthorizationHeaders();
@@ -84,7 +84,7 @@ export class PtxService {
     }
   }
 
-  async fetchPtxBusRealTimeNearStopSet(city: string) {
+  async fetchBusRealTimeNearStopSet(city: string) {
     const fields = ['PlateNumb', 'RouteUID', 'StopUID', 'BusStatus', 'A2EventType'];
     const url = `https://ptx.transportdata.tw/MOTC/v2/Bus/RealTimeNearStop/${this.getCityPath(city)}?$format=JSON&${this.getFieldsQuery(fields)}`;
     const headers = this.getAuthorizationHeaders();

@@ -16,8 +16,8 @@ export class BusStopService {
       ptxBusEstimatedTimeOfArrivalSet,
       ptxBusRealTimeNearStopSet,
     ] = await Promise.all([
-      this.ptxService.fetchPtxBusEstimatedTimeOfArrivalSet(city),
-      this.ptxService.fetchPtxBusRealTimeNearStopSet(city),
+      this.ptxService.fetchBusEstimatedTimeOfArrivalSet(city),
+      this.ptxService.fetchBusRealTimeNearStopSet(city),
     ]);
 
     // 把 ptxBusRealTimeNearStopSet 整理成 busDict

@@ -14,8 +14,8 @@ export class BusRouteService {
 
   async getBusRoutes(city: string) {
     const [ptxBusRouteSet, ptxBusStopOfRouteSet] = await Promise.all([
-      await this.ptxService.fetchPtxBusRouteSet(city),
-      await this.ptxService.fetchPtxBusStopOfRouteSet(city),
+      this.ptxService.fetchBusRouteSet(city),
+      this.ptxService.fetchBusStopOfRouteSet(city),
     ]);
 
     // 把 ptxBusStopOfRouteSet 整理成 busStopDict

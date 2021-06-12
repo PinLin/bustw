@@ -11,7 +11,7 @@ export class BusInfoService {
   ) { }
 
   async getBusInfo(city: string) {
-    const ptxDataVersion = await this.ptxService.fetchPtxDataVersion(city);
+    const ptxDataVersion = await this.ptxService.fetchDataVersion(city);
 
     return {
       routesVersion: ptxDataVersion.VersionID,

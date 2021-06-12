@@ -23,14 +23,14 @@ describe('PtxService', () => {
   });
 
   it('should fetchPtxDataVersion correctly', async () => {
-    const ptxDataVersion = await service.fetchPtxDataVersion('Keelung');
+    const ptxDataVersion = await service.fetchDataVersion('Keelung');
     expect(ptxDataVersion).toBeDefined();
     expect(ptxDataVersion.VersionID).toBeDefined();
     expect(ptxDataVersion.UpdateTime).toBeDefined();
   });
 
   it('should fetchPtxBusRouteSet correctly', async () => {
-    const ptxBusRouteSet = await service.fetchPtxBusRouteSet('Keelung');
+    const ptxBusRouteSet = await service.fetchBusRouteSet('Keelung');
     expect(ptxBusRouteSet).toBeDefined();
     expect(ptxBusRouteSet.length).toBeGreaterThan(0);
 
@@ -54,7 +54,7 @@ describe('PtxService', () => {
   });
 
   it('should fetchPtxBusStopOfRouteSet correctly', async () => {
-    const ptxBusStopOfRouteSet = await service.fetchPtxBusStopOfRouteSet('Keelung');
+    const ptxBusStopOfRouteSet = await service.fetchBusStopOfRouteSet('Keelung');
     expect(ptxBusStopOfRouteSet).toBeDefined();
     expect(ptxBusStopOfRouteSet.length).toBeGreaterThan(0);
 
@@ -75,7 +75,7 @@ describe('PtxService', () => {
   });
 
   it('should fetchPtxBusEstimatedTimeOfArrivalSet correctly', async () => {
-    const ptxBusEstimatedTimeOfArrivalSet = await service.fetchPtxBusEstimatedTimeOfArrivalSet('Keelung');
+    const ptxBusEstimatedTimeOfArrivalSet = await service.fetchBusEstimatedTimeOfArrivalSet('Keelung');
     expect(ptxBusEstimatedTimeOfArrivalSet).toBeDefined();
     expect(ptxBusEstimatedTimeOfArrivalSet.length).toBeGreaterThan(0);
 
@@ -86,7 +86,7 @@ describe('PtxService', () => {
   });
 
   it('should fetchPtxBusRealTimeNearStopSet correctly', async () => {
-    const ptxBusRealTimeNearStopSet = await service.fetchPtxBusRealTimeNearStopSet('Keelung');
+    const ptxBusRealTimeNearStopSet = await service.fetchBusRealTimeNearStopSet('Keelung');
     expect(ptxBusRealTimeNearStopSet).toBeDefined();
     expect(ptxBusRealTimeNearStopSet.length).toBeGreaterThan(0);
 
