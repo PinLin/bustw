@@ -55,7 +55,7 @@ export class PtxService {
   }
 
   async fetchBusStopOfRouteSet(city: string) {
-    const fields = ['RouteUID', 'SubRouteUID', 'Direction', 'City', 'Stops']
+    const fields = ['RouteUID', 'SubRouteUID', 'Direction', 'Stops']
     const url = `https://ptx.transportdata.tw/MOTC/v2/Bus/StopOfRoute/${this.getCityPath(city)}?$format=JSON&${this.getFieldsQuery(fields)}`;
     const headers = this.getAuthorizationHeaders();
 
