@@ -84,19 +84,62 @@ export class BusRouteService {
       stopsMap[subRouteId][direction].push(...stops);
     });
 
-    return ptxBusRouteSet.map((ptxBusRoute) => ({
-      id: ptxBusRoute.RouteUID,
-      nameZhTw: ptxBusRoute.RouteName.Zh_tw,
-      nameEn: ptxBusRoute.RouteName.En,
-      departureStopNameZhTw: ptxBusRoute.DepartureStopNameZh,
-      departureStopNameEn: ptxBusRoute.DepartureStopNameEn,
-      destinationStopNameZhTw: ptxBusRoute.DestinationStopNameZh,
-      destinationStopNameEn: ptxBusRoute.DestinationStopNameEn,
-      city: ptxBusRoute.City ?? 'InterCity',
-      subRoutes: ptxBusRoute.SubRoutes.map((ptxBusSubRoute) => ({
-        direction: ptxBusSubRoute.Direction,
-        stops: stopsMap[ptxBusSubRoute.SubRouteUID][ptxBusSubRoute.Direction],
-      })),
-    }) as BusRoute);
+    const routes = [] as BusRoute[];
+    ptxBusRouteSet.map((ptxBusRoute) => {
+      // 判斷是否要拆副線
+      if (ptxBusRoute.SubRoutes.filter(sr => sr.Direction == 0).length > 1) {
+        const unwrappedRoutesMap = {} as { [routeId: string]: BusRoute };
+        ptxBusRoute.SubRoutes.map((ptxBusSubRoute) => {
+          const routeId = ptxBusSubRoute.SubRouteUID.slice(0, ptxBusSubRoute.SubRouteUID.length - 1);
+          const routeNameZhTw = ptxBusSubRoute.SubRouteName.Zh_tw == ptxBusRoute.RouteName.Zh_tw + '0' ?
+            ptxBusRoute.RouteName.Zh_tw : ptxBusSubRoute.SubRouteName.Zh_tw;
+          const routeNameEn = ptxBusSubRoute.SubRouteName.En == ptxBusRoute.RouteName.En + '0' ?
+            ptxBusRoute.RouteName.En : ptxBusSubRoute.SubRouteName.En;
+
+          if (!unwrappedRoutesMap[routeId]) {
+            unwrappedRoutesMap[routeId] = {
+              id: routeId,
+              nameZhTw: routeNameZhTw,
+              nameEn: routeNameEn,
+              departureStopNameZhTw: ptxBusRoute.DepartureStopNameZh,
+              departureStopNameEn: ptxBusRoute.DepartureStopNameEn,
+              destinationStopNameZhTw: ptxBusRoute.DestinationStopNameZh,
+              destinationStopNameEn: ptxBusRoute.DestinationStopNameEn,
+              city: ptxBusRoute.City ?? 'InterCity',
+              subRoutes: [{
+                direction: ptxBusSubRoute.Direction,
+                stops: stopsMap[ptxBusSubRoute.SubRouteUID][ptxBusSubRoute.Direction],
+              }],
+            };
+          } else {
+            unwrappedRoutesMap[routeId].subRoutes.push({
+              direction: ptxBusSubRoute.Direction,
+              stops: stopsMap[ptxBusSubRoute.SubRouteUID][ptxBusSubRoute.Direction],
+            });
+          }
+
+        });
+
+        routes.push(...Object.values(unwrappedRoutesMap));
+
+      } else {
+        routes.push({
+          id: ptxBusRoute.RouteUID,
+          nameZhTw: ptxBusRoute.RouteName.Zh_tw,
+          nameEn: ptxBusRoute.RouteName.En,
+          departureStopNameZhTw: ptxBusRoute.DepartureStopNameZh,
+          departureStopNameEn: ptxBusRoute.DepartureStopNameEn,
+          destinationStopNameZhTw: ptxBusRoute.DestinationStopNameZh,
+          destinationStopNameEn: ptxBusRoute.DestinationStopNameEn,
+          city: ptxBusRoute.City ?? 'InterCity',
+          subRoutes: ptxBusRoute.SubRoutes.map((ptxBusSubRoute) => ({
+            direction: ptxBusSubRoute.Direction,
+            stops: stopsMap[ptxBusSubRoute.SubRouteUID][ptxBusSubRoute.Direction],
+          })),
+        });
+      }
+    });
+
+    return routes;
   }
 }
