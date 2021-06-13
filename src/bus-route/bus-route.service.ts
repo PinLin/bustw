@@ -64,8 +64,7 @@ export class BusRouteService {
       this.ptxService.fetchBusStopOfRouteSet(city),
     ]);
 
-    // 把 ptxBusStopOfRouteSet 整理成 busStopDict
-    let busStopDict = {} as { [subRouteId: string]: { [direction: string]: BusStop[] } };
+    const stopsMap = {} as { [subRouteId: string]: { [direction: string]: BusStop[] } };
     ptxBusStopOfRouteSet.map((ptxBusStopOfRoute) => {
       const subRouteId = ptxBusStopOfRoute.SubRouteUID;
       const direction = ptxBusStopOfRoute.Direction;
@@ -76,11 +75,13 @@ export class BusRouteService {
         nameEn: ptxBusStop.StopName.En,
       } as BusStop));
 
-      if (!busStopDict[subRouteId]) {
-        busStopDict[subRouteId] = { [direction]: stops };
-      } else {
-        busStopDict[subRouteId][direction] = stops;
+      if (!stopsMap[subRouteId]) {
+        stopsMap[subRouteId] = {};
       }
+      if (!stopsMap[subRouteId][direction]) {
+        stopsMap[subRouteId][direction] = [];
+      }
+      stopsMap[subRouteId][direction].push(...stops);
     });
 
     return ptxBusRouteSet.map((ptxBusRoute) => ({
@@ -93,12 +94,9 @@ export class BusRouteService {
       destinationStopNameEn: ptxBusRoute.DestinationStopNameEn,
       city: ptxBusRoute.City ?? 'InterCity',
       subRoutes: ptxBusRoute.SubRoutes.map((ptxBusSubRoute) => ({
-        id: ptxBusSubRoute.SubRouteUID,
         direction: ptxBusSubRoute.Direction,
-        nameZhTw: ptxBusSubRoute.SubRouteName.Zh_tw,
-        nameEn: ptxBusSubRoute.SubRouteName.En,
-        stops: busStopDict[ptxBusSubRoute.SubRouteUID][ptxBusSubRoute.Direction],
-      } as BusSubRoute)),
-    } as BusRoute));
+        stops: stopsMap[ptxBusSubRoute.SubRouteUID][ptxBusSubRoute.Direction],
+      })),
+    }) as BusRoute);
   }
 }
