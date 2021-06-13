@@ -12,6 +12,15 @@ export class BusRouteService {
     private readonly ptxService: PtxService,
   ) { }
 
+  async getCachedBusRoutes(city: string) {
+    const cachedBusRoutes = JSON.parse(await this.cache.get(`BusRoutes/${city}`) ?? null) as BusRoute[];
+    if (cachedBusRoutes) {
+      return cachedBusRoutes;
+    } else {
+      throw new ServiceUnavailableException();
+    }
+  }
+
   async getBusRoutes(city: string) {
     const [ptxBusRouteSet, ptxBusStopOfRouteSet] = await Promise.all([
       this.ptxService.fetchBusRouteSet(city),
@@ -54,14 +63,5 @@ export class BusRouteService {
         stops: busStopDict[ptxBusSubRoute.SubRouteUID][ptxBusSubRoute.Direction],
       } as BusSubRoute)),
     } as BusRoute));
-  }
-
-  async getCachedBusRoutes(city: string) {
-    const cachedBusRoutes = JSON.parse(await this.cache.get(`BusRoutes/${city}`) ?? null) as BusRoute[];
-    if (cachedBusRoutes) {
-      return cachedBusRoutes;
-    } else {
-      throw new ServiceUnavailableException();
-    }
   }
 }
