@@ -89,32 +89,34 @@ export class PtxService {
     }
   }
 
-  async fetchBusEstimatedTimeOfArrivalSet(city: string) {
-    const fields = ['RouteUID', 'StopUID', 'EstimateTime', 'StopStatus'];
-    const url = `https://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/${this.getCityPath(city)}?$format=JSON&${this.getFieldsQuery(fields)}`;
+  async fetchBusEstimatedTimeOfArrivalSet(city: string, routeName?: string) {
+    const fields = ['RouteUID', 'RouteName', 'StopUID', 'EstimateTime', 'StopStatus'];
+    const url =
+      `https://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/${this.getCityPath(city)}/${routeName ?? ''}?$format=JSON&${this.getFieldsQuery(fields)}`;
     const headers = this.getAuthorizationHeaders();
 
     try {
       const response = await this.httpService.get(url, { headers }).toPromise();
-      this.logger.debug(`Fetched BusEstimatedTimeOfArrival of ${city}`);
+      this.logger.debug(`Fetched BusEstimatedTimeOfArrival of ${city}${routeName ? ` with keyword ${routeName}` : ""}`);
       return response.data as PtxBusEstimatedTimeOfArrival[];
     } catch (e) {
-      this.logger.error(`Failed to fetch BusEstimatedTimeOfArrival of ${city}`);
+      this.logger.error(`Failed to fetch BusEstimatedTimeOfArrival of ${city}${routeName ? ` with keyword ${routeName}` : ""}`);
       throw new BadGatewayException();
     }
   }
 
-  async fetchBusRealTimeNearStopSet(city: string) {
+  async fetchBusRealTimeNearStopSet(city: string, routeName?: string) {
     const fields = ['PlateNumb', 'RouteUID', 'StopUID', 'BusStatus', 'A2EventType'];
-    const url = `https://ptx.transportdata.tw/MOTC/v2/Bus/RealTimeNearStop/${this.getCityPath(city)}?$format=JSON&${this.getFieldsQuery(fields)}`;
+    const url =
+      `https://ptx.transportdata.tw/MOTC/v2/Bus/RealTimeNearStop/${this.getCityPath(city)}/${routeName ?? ''}?$format=JSON&${this.getFieldsQuery(fields)}`;
     const headers = this.getAuthorizationHeaders();
 
     try {
       const response = await this.httpService.get(url, { headers }).toPromise();
-      this.logger.debug(`Fetched RealTimeNearStop of ${city}`);
+      this.logger.debug(`Fetched RealTimeNearStop of ${city}${routeName ? ` with keyword ${routeName}` : ""}`);
       return response.data as PtxBusRealTimeNearStop[];
     } catch (e) {
-      this.logger.error(`Failed to fetch RealTimeNearStop of ${city}`);
+      this.logger.error(`Failed to fetch RealTimeNearStop of ${city}${routeName ? ` with keyword ${routeName}` : ""}`);
       throw new BadGatewayException();
     }
   }

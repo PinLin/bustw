@@ -11,24 +11,22 @@ export class BusStopService {
     private readonly ptxService: PtxService,
   ) { }
 
-  async getCachedBusStops(city: string) {
+  async getCachedBusStopsByRouteName(city: string, routeName: string) {
     const cacheBusStops = JSON.parse(await this.cache.get(`BusStops/${city}`) ?? null) as BusStop[];
     if (cacheBusStops) {
-      return cacheBusStops;
+      return cacheBusStops.filter(s => s.routeNameZhTw.includes(routeName));
     } else {
+      // 更新快取
+      this.getBusStops(city).then((busStops) => {
+        this.cache.set(`BusStops/${city}`, JSON.stringify(busStops), { ttl: 60 });
+      });
+
       try {
-        // 更新快取
-        const busStops = await this.getBusStops(city);
-        await this.cache.set(`BusStops/${city}`, JSON.stringify(busStops), { ttl: 60 });
-        return busStops;
+        return await this.getBusStopsByRouteName(city, routeName);
       } catch (e) {
         throw new ServiceUnavailableException();
       }
     }
-  }
-
-  async getCachedBusStopsByRoute(city: string, routeId: string) {
-    return (await this.getCachedBusStops(city)).filter(s => s.routeId == routeId);
   }
 
   async getBusStops(city: string) {
@@ -40,20 +38,18 @@ export class BusStopService {
       this.ptxService.fetchBusRealTimeNearStopSet(city),
     ]);
 
-    // 把 ptxBusRealTimeNearStopSet 整理成 busDict
-    let busDict = {} as { [routeUID: string]: { [stopId: string]: Bus[] } };
+    let busesMap = {} as { [routeId: string]: { [stopId: string]: Bus[] } };
     ptxBusRealTimeNearStopSet.map((ptxBusRealTimeNearStop) => {
       const routeId = ptxBusRealTimeNearStop.RouteUID;
       const stopId = ptxBusRealTimeNearStop.StopUID;
 
-      if (!busDict[routeId]) {
-        busDict[routeId] = {};
+      if (!busesMap[routeId]) {
+        busesMap[routeId] = {};
       }
-      if (!busDict[routeId][stopId]) {
-        busDict[routeId][stopId] = [];
+      if (!busesMap[routeId][stopId]) {
+        busesMap[routeId][stopId] = [];
       }
-
-      busDict[routeId][stopId].push({
+      busesMap[routeId][stopId].push({
         plateNumber: ptxBusRealTimeNearStop.PlateNumb,
         status: ptxBusRealTimeNearStop.BusStatus ?? 0,
         approaching: ptxBusRealTimeNearStop.A2EventType,
@@ -61,15 +57,56 @@ export class BusStopService {
     });
 
     return ptxBusEstimatedTimeOfArrivalSet.map((ptxBusEstimatedTimeOfArrival) => {
-      const routeId = ptxBusEstimatedTimeOfArrival.RouteUID;
       const stopId = ptxBusEstimatedTimeOfArrival.StopUID;
+      const routeId = ptxBusEstimatedTimeOfArrival.RouteUID;
+      const routeNameZhTw = ptxBusEstimatedTimeOfArrival.RouteName.Zh_tw;
 
       return {
-        id: stopId,
-        routeId: ptxBusEstimatedTimeOfArrival.RouteUID,
+        id: stopId, routeId, routeNameZhTw,
         status: ptxBusEstimatedTimeOfArrival.StopStatus,
         estimateTime: ptxBusEstimatedTimeOfArrival.EstimateTime ?? null,
-        buses: busDict?.[routeId]?.[stopId] ?? [],
+        buses: busesMap?.[routeId]?.[stopId] ?? [],
+      } as BusStop;
+    });
+  }
+
+  async getBusStopsByRouteName(city: string, routeName: string) {
+    const [
+      ptxBusEstimatedTimeOfArrivalSet,
+      ptxBusRealTimeNearStopSet,
+    ] = await Promise.all([
+      this.ptxService.fetchBusEstimatedTimeOfArrivalSet(city, routeName),
+      this.ptxService.fetchBusRealTimeNearStopSet(city, routeName),
+    ]);
+
+    let busesMap = {} as { [routeId: string]: { [stopId: string]: Bus[] } };
+    ptxBusRealTimeNearStopSet.map((ptxBusRealTimeNearStop) => {
+      const routeId = ptxBusRealTimeNearStop.RouteUID;
+      const stopId = ptxBusRealTimeNearStop.StopUID;
+
+      if (!busesMap[routeId]) {
+        busesMap[routeId] = {};
+      }
+      if (!busesMap[routeId][stopId]) {
+        busesMap[routeId][stopId] = [];
+      }
+      busesMap[routeId][stopId].push({
+        plateNumber: ptxBusRealTimeNearStop.PlateNumb,
+        status: ptxBusRealTimeNearStop.BusStatus ?? 0,
+        approaching: ptxBusRealTimeNearStop.A2EventType,
+      } as Bus);
+    });
+
+    return ptxBusEstimatedTimeOfArrivalSet.map((ptxBusEstimatedTimeOfArrival) => {
+      const stopId = ptxBusEstimatedTimeOfArrival.StopUID;
+      const routeId = ptxBusEstimatedTimeOfArrival.RouteUID;
+      const routeNameZhTw = ptxBusEstimatedTimeOfArrival.RouteName.Zh_tw;
+
+      return {
+        id: stopId, routeId, routeNameZhTw,
+        status: ptxBusEstimatedTimeOfArrival.StopStatus,
+        estimateTime: ptxBusEstimatedTimeOfArrival.EstimateTime ?? null,
+        buses: busesMap?.[routeId]?.[stopId] ?? [],
       } as BusStop;
     });
   }
