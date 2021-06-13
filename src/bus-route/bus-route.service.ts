@@ -22,6 +22,43 @@ export class BusRouteService {
   }
 
   async getBusRoutes(city: string) {
+    // 判斷是否支援 PtxBusDisplayStopOfRoute API
+    if (this.ptxService.getBusDisplayStopOfRouteAvailableCities().includes(city)) {
+      const [ptxBusRouteSet, ptxBusDisplayStopOfRouteSet] = await Promise.all([
+        this.ptxService.fetchBusRouteSet(city),
+        this.ptxService.fetchBusDisplayStopOfRouteSet(city),
+      ]);
+
+      const subRoutesMap = {} as { [routeId: string]: BusSubRoute[] };
+      ptxBusDisplayStopOfRouteSet.map((ptxBusDisplayStopOfRoute) => {
+        const routeId = ptxBusDisplayStopOfRoute.RouteUID;
+        const direction = ptxBusDisplayStopOfRoute.Direction;
+        const stops = ptxBusDisplayStopOfRoute.Stops.map((ptxBusStop) => ({
+          id: ptxBusStop.StopUID,
+          sequence: ptxBusStop.StopSequence,
+          nameZhTw: ptxBusStop.StopName.Zh_tw,
+          nameEn: ptxBusStop.StopName.En,
+        } as BusStop));
+
+        if (!subRoutesMap[routeId]) {
+          subRoutesMap[routeId] = [];
+        }
+        subRoutesMap[routeId].push({ direction, stops });
+      });
+
+      return ptxBusRouteSet.map((ptxBusRoute) => ({
+        id: ptxBusRoute.RouteUID,
+        nameZhTw: ptxBusRoute.RouteName.Zh_tw,
+        nameEn: ptxBusRoute.RouteName.En,
+        departureStopNameZhTw: ptxBusRoute.DepartureStopNameZh,
+        departureStopNameEn: ptxBusRoute.DepartureStopNameEn,
+        destinationStopNameZhTw: ptxBusRoute.DestinationStopNameZh,
+        destinationStopNameEn: ptxBusRoute.DestinationStopNameEn,
+        city: ptxBusRoute.City ?? 'InterCity',
+        subRoutes: subRoutesMap[ptxBusRoute.RouteUID],
+      } as BusRoute));
+    }
+
     const [ptxBusRouteSet, ptxBusStopOfRouteSet] = await Promise.all([
       this.ptxService.fetchBusRouteSet(city),
       this.ptxService.fetchBusStopOfRouteSet(city),

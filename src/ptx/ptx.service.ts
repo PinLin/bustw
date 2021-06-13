@@ -6,6 +6,7 @@ import { PtxBusRoute } from './model/ptx-bus-route.model';
 import { PtxBusStopOfRoute } from './model/ptx-bus-stop-of-route.model';
 import { PtxBusEstimatedTimeOfArrival } from './model/ptx-bus-estimated-time-of-arrival.model';
 import { PtxBusRealTimeNearStop } from './model/ptx-bus-real-time-near-stop.model';
+import { PtxBusDisplayStopOfRoute } from './model/ptx-bus-display-stop-of-route.model';
 
 @Injectable()
 export class PtxService {
@@ -23,6 +24,10 @@ export class PtxService {
       'ChiayiCounty', 'Chiayi', 'PingtungCounty', 'YilanCounty', 'HualienCounty', 'TaitungCounty',
       'KinmenCounty', 'PenghuCounty', 'LienchiangCounty'
     ];
+  }
+
+  getBusDisplayStopOfRouteAvailableCities() {
+    return ['Taipei', 'NewTaipei', 'Taoyuan', 'Taichung', 'Tainan'];
   }
 
   async fetchDataVersion(city: string) {
@@ -50,6 +55,21 @@ export class PtxService {
       return response.data as PtxBusRoute[];
     } catch (e) {
       this.logger.error(`Failed to fetch BusRoute of ${city}`);
+      throw new BadGatewayException();
+    }
+  }
+
+  async fetchBusDisplayStopOfRouteSet(city: string) {
+    const fields = ['RouteUID', 'Direction', 'Stops']
+    const url = `https://ptx.transportdata.tw/MOTC/v2/Bus/DisplayStopOfRoute/${this.getCityPath(city)}?$format=JSON&${this.getFieldsQuery(fields)}`;
+    const headers = this.getAuthorizationHeaders();
+
+    try {
+      const response = await this.httpService.get(url, { headers }).toPromise();
+      this.logger.debug(`Fetched BusDisplayStopOfRoute of ${city}`);
+      return response.data as PtxBusDisplayStopOfRoute[];
+    } catch (e) {
+      this.logger.error(`Failed to fetch BusDisplayStopOfRoute of ${city}`);
       throw new BadGatewayException();
     }
   }
