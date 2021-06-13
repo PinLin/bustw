@@ -43,7 +43,7 @@ export class BusRouteService {
         if (!subRoutesMap[routeId]) {
           subRoutesMap[routeId] = [];
         }
-        subRoutesMap[routeId].push({ direction, stops });
+        subRoutesMap[routeId].push({ id: `${routeId}${direction}`, direction, stops });
       });
 
       return ptxBusRouteSet.map((ptxBusRoute) => ({
@@ -107,12 +107,14 @@ export class BusRouteService {
               destinationStopNameEn: ptxBusRoute.DestinationStopNameEn,
               city: ptxBusRoute.City ?? 'InterCity',
               subRoutes: [{
+                id: ptxBusSubRoute.SubRouteUID,
                 direction: ptxBusSubRoute.Direction,
                 stops: stopsMap[ptxBusSubRoute.SubRouteUID][ptxBusSubRoute.Direction],
               }],
             };
           } else {
             unwrappedRoutesMap[routeId].subRoutes.push({
+              id: ptxBusSubRoute.SubRouteUID,
               direction: ptxBusSubRoute.Direction,
               stops: stopsMap[ptxBusSubRoute.SubRouteUID][ptxBusSubRoute.Direction],
             });
@@ -133,6 +135,7 @@ export class BusRouteService {
           destinationStopNameEn: ptxBusRoute.DestinationStopNameEn,
           city: ptxBusRoute.City ?? 'InterCity',
           subRoutes: ptxBusRoute.SubRoutes.map((ptxBusSubRoute) => ({
+            id: ptxBusSubRoute.SubRouteUID,
             direction: ptxBusSubRoute.Direction,
             stops: stopsMap[ptxBusSubRoute.SubRouteUID][ptxBusSubRoute.Direction],
           })),
