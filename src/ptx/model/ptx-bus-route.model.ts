@@ -11,6 +11,8 @@ export class PtxBusRoute {
       En: string;
     };
     Direction: number;
+    Headsign: string;
+    HeadsignEn: string;
   }[];
   DepartureStopNameZh: string;
   DepartureStopNameEn: string;

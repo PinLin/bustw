@@ -99,8 +99,8 @@ export class BusRouteService {
           if (!unwrappedRoutesMap[routeId]) {
             unwrappedRoutesMap[routeId] = {
               id: routeId,
-              nameZhTw: routeNameZhTw,
-              nameEn: routeNameEn,
+              nameZhTw: `${routeNameZhTw} ${ptxBusSubRoute.Headsign ?? ''}`,
+              nameEn: `${routeNameEn} ${ptxBusSubRoute.HeadsignEn ?? ''}`,
               departureStopNameZhTw: ptxBusRoute.DepartureStopNameZh,
               departureStopNameEn: ptxBusRoute.DepartureStopNameEn,
               destinationStopNameZhTw: ptxBusRoute.DestinationStopNameZh,
