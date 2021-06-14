@@ -99,8 +99,8 @@ export class BusRouteService {
           if (!unwrappedRoutesMap[routeId]) {
             unwrappedRoutesMap[routeId] = {
               id: routeId,
-              nameZhTw: `${routeNameZhTw} ${ptxBusSubRoute.Headsign ?? ''}`,
-              nameEn: `${routeNameEn} ${ptxBusSubRoute.HeadsignEn ?? ''}`,
+              nameZhTw: routeNameZhTw,
+              nameEn: routeNameEn,
               departureStopNameZhTw: ptxBusRoute.DepartureStopNameZh,
               departureStopNameEn: ptxBusRoute.DepartureStopNameEn,
               destinationStopNameZhTw: ptxBusRoute.DestinationStopNameZh,
@@ -109,6 +109,8 @@ export class BusRouteService {
               subRoutes: [{
                 id: ptxBusSubRoute.SubRouteUID,
                 direction: ptxBusSubRoute.Direction,
+                headsignZhTw: ptxBusSubRoute.Headsign,
+                headsignEn: ptxBusSubRoute.HeadsignEn,
                 stops: stopsMap[ptxBusSubRoute.SubRouteUID][ptxBusSubRoute.Direction],
               }],
             };
@@ -116,6 +118,8 @@ export class BusRouteService {
             unwrappedRoutesMap[routeId].subRoutes.push({
               id: ptxBusSubRoute.SubRouteUID,
               direction: ptxBusSubRoute.Direction,
+              headsignZhTw: ptxBusSubRoute.Headsign,
+              headsignEn: ptxBusSubRoute.HeadsignEn,
               stops: stopsMap[ptxBusSubRoute.SubRouteUID][ptxBusSubRoute.Direction],
             });
           }
@@ -137,6 +141,8 @@ export class BusRouteService {
           subRoutes: ptxBusRoute.SubRoutes.map((ptxBusSubRoute) => ({
             id: ptxBusSubRoute.SubRouteUID,
             direction: ptxBusSubRoute.Direction,
+            headsignZhTw: ptxBusSubRoute.Headsign,
+            headsignEn: ptxBusSubRoute.HeadsignEn,
             stops: stopsMap[ptxBusSubRoute.SubRouteUID][ptxBusSubRoute.Direction],
           })),
         });
