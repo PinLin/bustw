@@ -35,7 +35,7 @@ export class PtxService {
     const headers = this.getAuthorizationHeaders();
 
     try {
-      const response = await this.httpService.get(url, { headers }).toPromise();
+      const response = await this.httpService.get(encodeURI(url), { headers }).toPromise();
       this.logger.debug(`Fetched DataVersion of ${city}`);
       return response.data as PtxDataVersion;
     } catch (e) {
@@ -50,7 +50,7 @@ export class PtxService {
     const headers = this.getAuthorizationHeaders();
 
     try {
-      const response = await this.httpService.get(url, { headers }).toPromise();
+      const response = await this.httpService.get(encodeURI(url), { headers }).toPromise();
       this.logger.debug(`Fetched BusRoute of ${city}`);
       return response.data as PtxBusRoute[];
     } catch (e) {
@@ -65,7 +65,7 @@ export class PtxService {
     const headers = this.getAuthorizationHeaders();
 
     try {
-      const response = await this.httpService.get(url, { headers }).toPromise();
+      const response = await this.httpService.get(encodeURI(url), { headers }).toPromise();
       this.logger.debug(`Fetched BusDisplayStopOfRoute of ${city}`);
       return response.data as PtxBusDisplayStopOfRoute[];
     } catch (e) {
@@ -80,7 +80,7 @@ export class PtxService {
     const headers = this.getAuthorizationHeaders();
 
     try {
-      const response = await this.httpService.get(url, { headers }).toPromise();
+      const response = await this.httpService.get(encodeURI(url), { headers }).toPromise();
       this.logger.debug(`Fetched BusStopOfRoute of ${city}`);
       return response.data as PtxBusStopOfRoute[];
     } catch (e) {
@@ -96,7 +96,7 @@ export class PtxService {
     const headers = this.getAuthorizationHeaders();
 
     try {
-      const response = await this.httpService.get(url, { headers }).toPromise();
+      const response = await this.httpService.get(encodeURI(url), { headers }).toPromise();
       this.logger.debug(`Fetched BusEstimatedTimeOfArrival of ${city}${routeName ? ` with keyword ${routeName}` : ""}`);
       return response.data as PtxBusEstimatedTimeOfArrival[];
     } catch (e) {
@@ -112,7 +112,7 @@ export class PtxService {
     const headers = this.getAuthorizationHeaders();
 
     try {
-      const response = await this.httpService.get(url, { headers }).toPromise();
+      const response = await this.httpService.get(encodeURI(url), { headers }).toPromise();
       this.logger.debug(`Fetched RealTimeNearStop of ${city}${routeName ? ` with keyword ${routeName}` : ""}`);
       return response.data as PtxBusRealTimeNearStop[];
     } catch (e) {
