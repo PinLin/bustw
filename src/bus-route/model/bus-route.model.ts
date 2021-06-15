@@ -2,6 +2,7 @@ import { BusSubRoute } from './bus-sub-route.model';
 
 export class BusRoute {
   id: string;
+  ptxName: string;
   nameZhTw?: string;
   nameEn?: string;
   departureStopNameZhTw?: string;

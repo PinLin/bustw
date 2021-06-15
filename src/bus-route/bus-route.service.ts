@@ -48,6 +48,7 @@ export class BusRouteService {
 
       return ptxBusRouteSet.map((ptxBusRoute) => ({
         id: ptxBusRoute.RouteUID,
+        ptxName: ptxBusRoute.RouteName.Zh_tw,
         nameZhTw: ptxBusRoute.RouteName.Zh_tw,
         nameEn: ptxBusRoute.RouteName.En,
         departureStopNameZhTw: ptxBusRoute.DepartureStopNameZh,
@@ -99,6 +100,7 @@ export class BusRouteService {
           if (!unwrappedRoutesMap[routeId]) {
             unwrappedRoutesMap[routeId] = {
               id: routeId,
+              ptxName: ptxBusRoute.RouteName.Zh_tw,
               nameZhTw: routeNameZhTw,
               nameEn: routeNameEn,
               departureStopNameZhTw: ptxBusRoute.DepartureStopNameZh,
@@ -131,6 +133,7 @@ export class BusRouteService {
       } else {
         routes.push({
           id: ptxBusRoute.RouteUID,
+          ptxName: ptxBusRoute.RouteName.Zh_tw,
           nameZhTw: ptxBusRoute.RouteName.Zh_tw,
           nameEn: ptxBusRoute.RouteName.En,
           departureStopNameZhTw: ptxBusRoute.DepartureStopNameZh,
