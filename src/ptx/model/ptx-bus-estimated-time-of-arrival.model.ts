@@ -4,6 +4,8 @@ export class PtxBusEstimatedTimeOfArrival {
     Zh_tw: string;
     En: string;
   };
+  SubRouteUID: string;
+  Direction: number;
   EstimateTime: number;
   StopUID: string;
   StopStatus: number;

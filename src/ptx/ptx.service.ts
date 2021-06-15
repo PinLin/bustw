@@ -90,7 +90,7 @@ export class PtxService {
   }
 
   async fetchBusEstimatedTimeOfArrivalSet(city: string, routeName?: string) {
-    const fields = ['RouteUID', 'RouteName', 'StopUID', 'EstimateTime', 'StopStatus'];
+    const fields = ['RouteUID', 'RouteName', 'SubRouteUID', 'Direction', 'StopUID', 'EstimateTime', 'StopStatus'];
     const url =
       `https://ptx.transportdata.tw/MOTC/v2/Bus/EstimatedTimeOfArrival/${this.getCityPath(city)}/${routeName ?? ''}?$format=JSON&${this.getFieldsQuery(fields)}`;
     const headers = this.getAuthorizationHeaders();
@@ -106,7 +106,7 @@ export class PtxService {
   }
 
   async fetchBusRealTimeNearStopSet(city: string, routeName?: string) {
-    const fields = ['PlateNumb', 'RouteUID', 'StopUID', 'BusStatus', 'A2EventType'];
+    const fields = ['PlateNumb', 'RouteUID', 'SubRouteUID', 'Direction', 'StopUID', 'BusStatus', 'A2EventType'];
     const url =
       `https://ptx.transportdata.tw/MOTC/v2/Bus/RealTimeNearStop/${this.getCityPath(city)}/${routeName ?? ''}?$format=JSON&${this.getFieldsQuery(fields)}`;
     const headers = this.getAuthorizationHeaders();

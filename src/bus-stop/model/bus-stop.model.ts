@@ -2,7 +2,7 @@ import { Bus } from "./bus.model";
 
 export class BusStop {
   id: string;
-  routeId: string;
+  subRouteId: string;
   routeNameZhTw: string;
   status: number;
   estimateTime: number;

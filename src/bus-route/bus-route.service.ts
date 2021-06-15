@@ -108,24 +108,16 @@ export class BusRouteService {
               destinationStopNameZhTw: ptxBusRoute.DestinationStopNameZh,
               destinationStopNameEn: ptxBusRoute.DestinationStopNameEn,
               city: ptxBusRoute.City ?? 'InterCity',
-              subRoutes: [{
-                id: ptxBusSubRoute.SubRouteUID,
-                direction: ptxBusSubRoute.Direction,
-                headsignZhTw: ptxBusSubRoute.Headsign,
-                headsignEn: ptxBusSubRoute.HeadsignEn,
-                stops: stopsMap[ptxBusSubRoute.SubRouteUID][ptxBusSubRoute.Direction],
-              }],
+              subRoutes: [],
             };
-          } else {
-            unwrappedRoutesMap[routeId].subRoutes.push({
-              id: ptxBusSubRoute.SubRouteUID,
-              direction: ptxBusSubRoute.Direction,
-              headsignZhTw: ptxBusSubRoute.Headsign,
-              headsignEn: ptxBusSubRoute.HeadsignEn,
-              stops: stopsMap[ptxBusSubRoute.SubRouteUID][ptxBusSubRoute.Direction],
-            });
           }
-
+          unwrappedRoutesMap[routeId].subRoutes.push({
+            id: ptxBusSubRoute.SubRouteUID,
+            direction: ptxBusSubRoute.Direction,
+            headsignZhTw: ptxBusSubRoute.Headsign,
+            headsignEn: ptxBusSubRoute.HeadsignEn,
+            stops: stopsMap[ptxBusSubRoute.SubRouteUID][ptxBusSubRoute.Direction],
+          });
         });
 
         routes.push(...Object.values(unwrappedRoutesMap));

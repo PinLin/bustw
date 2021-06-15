@@ -22,55 +22,14 @@ export class BusStopService {
       });
 
       try {
-        return await this.getBusStopsByRouteName(city, routeName);
+        return await this.getBusStops(city, routeName);
       } catch (e) {
         throw new ServiceUnavailableException();
       }
     }
   }
 
-  async getBusStops(city: string) {
-    const [
-      ptxBusEstimatedTimeOfArrivalSet,
-      ptxBusRealTimeNearStopSet,
-    ] = await Promise.all([
-      this.ptxService.fetchBusEstimatedTimeOfArrivalSet(city),
-      this.ptxService.fetchBusRealTimeNearStopSet(city),
-    ]);
-
-    let busesMap = {} as { [routeId: string]: { [stopId: string]: Bus[] } };
-    ptxBusRealTimeNearStopSet.map((ptxBusRealTimeNearStop) => {
-      const routeId = ptxBusRealTimeNearStop.RouteUID;
-      const stopId = ptxBusRealTimeNearStop.StopUID;
-
-      if (!busesMap[routeId]) {
-        busesMap[routeId] = {};
-      }
-      if (!busesMap[routeId][stopId]) {
-        busesMap[routeId][stopId] = [];
-      }
-      busesMap[routeId][stopId].push({
-        plateNumber: ptxBusRealTimeNearStop.PlateNumb,
-        status: ptxBusRealTimeNearStop.BusStatus ?? 0,
-        approaching: ptxBusRealTimeNearStop.A2EventType,
-      } as Bus);
-    });
-
-    return ptxBusEstimatedTimeOfArrivalSet.map((ptxBusEstimatedTimeOfArrival) => {
-      const stopId = ptxBusEstimatedTimeOfArrival.StopUID;
-      const routeId = ptxBusEstimatedTimeOfArrival.RouteUID;
-      const routeNameZhTw = ptxBusEstimatedTimeOfArrival.RouteName.Zh_tw;
-
-      return {
-        id: stopId, routeId, routeNameZhTw,
-        status: ptxBusEstimatedTimeOfArrival.StopStatus,
-        estimateTime: ptxBusEstimatedTimeOfArrival.EstimateTime ?? null,
-        buses: busesMap?.[routeId]?.[stopId] ?? [],
-      } as BusStop;
-    });
-  }
-
-  async getBusStopsByRouteName(city: string, routeName: string) {
+  async getBusStops(city: string, routeName?: string) {
     const [
       ptxBusEstimatedTimeOfArrivalSet,
       ptxBusRealTimeNearStopSet,
@@ -79,18 +38,22 @@ export class BusStopService {
       this.ptxService.fetchBusRealTimeNearStopSet(city, routeName),
     ]);
 
-    let busesMap = {} as { [routeId: string]: { [stopId: string]: Bus[] } };
+    const ptxBusDisplayStopOfRouteAvailable = this.ptxService.getBusDisplayStopOfRouteAvailableCities().includes(city);
+
+    let busesMap = {} as { [subRouteId: string]: { [stopId: string]: Bus[] } };
     ptxBusRealTimeNearStopSet.map((ptxBusRealTimeNearStop) => {
-      const routeId = ptxBusRealTimeNearStop.RouteUID;
+      const subRouteId = ptxBusDisplayStopOfRouteAvailable ?
+        (ptxBusRealTimeNearStop.RouteUID + ptxBusRealTimeNearStop.Direction) :
+        (ptxBusRealTimeNearStop.SubRouteUID);
       const stopId = ptxBusRealTimeNearStop.StopUID;
 
-      if (!busesMap[routeId]) {
-        busesMap[routeId] = {};
+      if (!busesMap[subRouteId]) {
+        busesMap[subRouteId] = {};
       }
-      if (!busesMap[routeId][stopId]) {
-        busesMap[routeId][stopId] = [];
+      if (!busesMap[subRouteId][stopId]) {
+        busesMap[subRouteId][stopId] = [];
       }
-      busesMap[routeId][stopId].push({
+      busesMap[subRouteId][stopId].push({
         plateNumber: ptxBusRealTimeNearStop.PlateNumb,
         status: ptxBusRealTimeNearStop.BusStatus ?? 0,
         approaching: ptxBusRealTimeNearStop.A2EventType,
@@ -99,14 +62,16 @@ export class BusStopService {
 
     return ptxBusEstimatedTimeOfArrivalSet.map((ptxBusEstimatedTimeOfArrival) => {
       const stopId = ptxBusEstimatedTimeOfArrival.StopUID;
-      const routeId = ptxBusEstimatedTimeOfArrival.RouteUID;
+      const subRouteId = ptxBusDisplayStopOfRouteAvailable ?
+        (ptxBusEstimatedTimeOfArrival.RouteUID + ptxBusEstimatedTimeOfArrival.Direction) :
+        (ptxBusEstimatedTimeOfArrival.SubRouteUID);
       const routeNameZhTw = ptxBusEstimatedTimeOfArrival.RouteName.Zh_tw;
 
       return {
-        id: stopId, routeId, routeNameZhTw,
+        id: stopId, subRouteId, routeNameZhTw,
         status: ptxBusEstimatedTimeOfArrival.StopStatus,
         estimateTime: ptxBusEstimatedTimeOfArrival.EstimateTime ?? null,
-        buses: busesMap?.[routeId]?.[stopId] ?? [],
+        buses: busesMap?.[subRouteId]?.[stopId] ?? [],
       } as BusStop;
     });
   }
