@@ -21,4 +21,4 @@ RUN npm prune --production
 EXPOSE 3000
 
 # Run the app
-CMD [ "sh", "docker-entrypoint.sh" ]
+CMD [ "npm", "run", "start:prod" ]

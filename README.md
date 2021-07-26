@@ -8,13 +8,21 @@ Bus tracker for Taiwan 🇹🇼
 
 ## Usage
 
+Create file `.env`
+
+```bash
+PTX_APP_ID='<YOUR_PTX_APP_ID>'
+PTX_APP_KEY='<YOUR_PTX_APP_KEY>'
+
+REDIS_HOST='172.17.0.1'
+REDIS_PORT=6379
+```
+
 ### `Docker`
 
 ```bash
 docker run --name bustw-server \
--e PTX_APP_ID='<PTX_APP_ID>' \
--e PTX_APP_KEY='<PTX_APP_KEY>' \
--e REDIS_HOST='172.17.0.1' \
+-v $PWD/.env:/app/.env \
 -p 3000:3000 \
 --restart=always -d \
 pinlin/bustw-server
