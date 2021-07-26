@@ -18,7 +18,7 @@ export class BusStopService {
     } else {
       // 更新快取
       this.getBusStops(city).then((busStops) => {
-        this.cache.set(`BusStops/${city}`, JSON.stringify(busStops), { ttl: 60 });
+        this.cache.set(`BusStops/${city}`, JSON.stringify(busStops), { ttl: 10 });
       });
 
       try {
